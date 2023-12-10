@@ -1,0 +1,19 @@
+{
+  "name": "create-web3-ui",
+  "version": "0.1.0",
+  "description": "Create a web3 frontend with a single command.",
+  "type": "module",
+  "bin": "cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "defispartan <defispartan.eth, defispartan@gmail.com>",
+  "dependencies": {
+    "@inquirer/prompts": "^3.1.1",
+    "chalk": "^5.3.0",
+    "cli-spinners": "^2.9.0",
+    "commander": "^11.0.0",
+    "execa": "^8.0.1",
+    "ora": "^7.0.1"
+  }
+}
