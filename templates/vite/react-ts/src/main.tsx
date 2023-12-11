@@ -4,35 +4,18 @@ import "./display/styles/index.css";
 
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 import { WagmiConfig, configureChains, createConfig } from "wagmi";
-import { sepolia } from "wagmi/chains";
-import { publicProvider } from "wagmi/providers/public";
+
 import { App } from "./App";
 import { QueryClient, QueryClientProvider } from "react-query";
-
-export const activeChain = sepolia; // chain where app is currently reading data from
-export const availableChains = [sepolia]; // chains to allow wallet connection
+import web3Config from "../web3.config.ts";
 
 export const { publicClient } = configureChains(
-  availableChains, // add chains here
-  [
-    /* add additional RPC providers here     
-    jsonRpcProvider({
-    rpc: () => ({
-      http: "",
-      }),
-      alchemyProvider({apiKey: ""}),
-    }), 
-    */
-    publicProvider(),
-  ]
+  web3Config.availableChains,
+  web3Config.rpcProviders
 );
 
 const config = createConfig(
-  getDefaultConfig({
-    appName: "My Web3 UI",
-    chains: availableChains,
-    walletConnectProjectId: import.meta.env.VITE_WALLETCONNECT_PROJECT_ID,
-  })
+  getDefaultConfig({ ...web3Config.appConfig, publicClient })
 );
 
 const root = ReactDOM.createRoot(
@@ -49,7 +32,7 @@ root.render(
         options={{
           walletConnectName: "WalletConnect",
           walletConnectCTA: "both",
-          initialChainId: 1,
+          initialChainId: web3Config.defaultChain.id,
           enforceSupportedChains: false,
         }}
       >

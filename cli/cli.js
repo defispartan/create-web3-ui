@@ -2,32 +2,51 @@
 
 import chalk from "chalk";
 import path from "path";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
 import fs from "fs";
 import { input } from "@inquirer/prompts";
 import { Command } from "commander";
 import select from "@inquirer/select";
-import { execa, execaCommand } from "execa";
+import { execaCommand } from "execa";
 import ora from "ora";
+import childProcess from "child_process";
 
 const log = console.log;
 const program = new Command();
 const green = chalk.green;
 
+const isYarnInstalled = () => {
+  try {
+    childProcess.execSync("yarn --version");
+    return true;
+  } catch {
+    return false;
+  }
+};
+
+const isBunInstalled = () => {
+  try {
+    childProcess.execSync("bun --version");
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
+const isPnpmInstalled = () => {
+  try {
+    childProcess.execSync("pnpm --version");
+    return true;
+  } catch (err) {
+    return false;
+  }
+};
+
 async function main() {
   const spinner = ora({
     text: "Creating codebase",
   });
-  function getPackageManager() {
-    if (process.env.npm_execpath?.includes("bun")) {
-      return "bun";
-    } else if (process.env.npm_execpath?.includes("pnpm")) {
-      return "pnpm";
-    } else if (process.env.npm_execpath?.includes("yarn")) {
-      return "yarn";
-    } else {
-      return "npm";
-    }
-  }
 
   try {
     const kebabRegez = /^([a-z]+)(-[a-z0-9]+)*$/;
@@ -75,7 +94,7 @@ async function main() {
             value: "vite-react-ts",
             description: "Template for a Vite + React + TypeScript project",
           },
-          {
+          /*   {
             name: "vite-react-js",
             value: "vite-react-js",
             description: "Template for a Vite + React project",
@@ -89,7 +108,7 @@ async function main() {
             name: "next-ts",
             value: "next-ts",
             description: "Template for a Next.js + TypeScript project",
-          },
+          }, */
         ],
       });
     }
@@ -99,31 +118,56 @@ async function main() {
       case "vite-react-ts":
         subDirPath = "templates/vite/react-ts";
         break;
-      case "vite-react-js":
+      /*   case "vite-react-js":
         subDirPath = "templates/vite/react-js";
         break;
       case "next-js":
-        subDirPath = "templates/next-js";
+        subDirPath = "templates/nextjs/js";
         break;
       case "next-ts":
-        subDirPath = "templates/next-ts";
-        break;
+        subDirPath = "templates/nextjs/ts";
+        break; */
     }
 
     spinner.start();
 
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    let tempDir = path.join(__dirname, "temp");
+    let finalDir = path.join(process.cwd(), appName);
+
     try {
-      await execaCommand(`git init ${appName}`);
-      await execaCommand(`git -C ${appName} remote add origin ${repoUrl}`);
-      await execaCommand(`git -C ${appName} config core.sparseCheckout true`);
-      await fs.writeFileSync(
-        `${appName}/.git/info/sparse-checkout`,
-        subDirPath
-      );
-      await execaCommand(`git -C ${appName} pull origin main`);
+      if (fs.existsSync(tempDir)) {
+        fs.rmSync(tempDir, { recursive: true });
+      }
+
+      await execaCommand(`git clone ${repoUrl} ${tempDir}`);
+      let subDirFullPath = path.join(tempDir, subDirPath);
+
+      // Check if the subdirectory exists
+      if (!fs.existsSync(subDirFullPath)) {
+        log(
+          `The subdirectory '${subDirPath}' does not exist in the repository.`
+        );
+        throw new Error(
+          `The subdirectory '${subDirPath}' does not exist in the repository.`
+        );
+      }
+
+      // Move contents from the subdirectory to the final directory
+      fs.mkdirSync(finalDir, { recursive: true });
+      fs.readdirSync(subDirFullPath).forEach((file) => {
+        let srcPath = path.join(subDirFullPath, file);
+        let destPath = path.join(finalDir, file);
+        fs.renameSync(srcPath, destPath);
+      });
+
+      // Remove the temporary directory
+      fs.rmSync(tempDir, { recursive: true });
     } catch (e) {
-      log("GH clone error");
+      log("\n");
+      log("Error occurred while cloning and moving files");
       log(e);
+      return;
     }
 
     let packageJson = fs.readFileSync(`${appName}/package.json`, "utf8");
@@ -132,55 +176,57 @@ async function main() {
     packageJson = JSON.stringify(packageObj, null, 2);
     fs.writeFileSync(`${appName}/package.json`, packageJson);
 
-    process.chdir(path.join(process.cwd(), appName));
+    process.chdir(finalDir, appName);
     spinner.text = "";
     let startCommand = "";
-
-    const packageManager = getPackageManager();
 
     const lockFiles = [
       "package-lock.json",
       "yarn.lock",
-      "bun.lockb, pnpm-lock.yaml",
+      "bun.lockb",
+      "pnpm-lock.yaml",
     ];
-    const keepLockFile =
-      packageManager === "bun"
-        ? "bun.lockb"
-        : packageManager === "pnpm"
-        ? "pnpm-lock.yaml"
-        : packageManager === "yarn"
-        ? "yarn.lock"
-        : "package-lock.json";
+    const bun = isBunInstalled();
+    const pnpm = isPnpmInstalled();
+    const yarn = isYarnInstalled();
+
+    const keepLockFile = bun
+      ? "bun.lockb"
+      : pnpm
+      ? "pnpm-lock.yaml"
+      : yarn
+      ? "yarn.lock"
+      : "package-lock.json";
 
     lockFiles.forEach(async (file) => {
       if (file !== keepLockFile) {
         try {
-          fs.unlinkSync(path.join(appName, file));
+          if (fs.existsSync(path.join(finalDir, file)))
+            fs.unlinkSync(path.join(finalDir, file));
         } catch (err) {
-          // Handle error if file does not exist
+          log("\n");
+          log("error");
+          log(err);
         }
       } else {
-        if (isBunInstalled()) {
-          spinner.text = "Installing dependencies";
+        log("\n");
+        log("installing");
+        if (bun) {
+          spinner.text = `Installing dependencies:`;
           await execaCommand("bun install").pipeStdout(process.stdout);
           spinner.text = "";
           startCommand = "bun run dev";
-          console.log("\n");
-        } else if (isYarnInstalled()) {
-          await execaCommand("yarn").pipeStdout(process.stdout);
-          startCommand = "yarn dev";
-        } else if (isPnpmInstalled()) {
-          spinner.text = "Installing dependencies";
-          await execa("pnpm", ["install", "--verbose"]).pipeStdout(
-            process.stdout
-          );
-          spinner.text = "";
+        } else if (pnpm) {
+          await execaCommand("pnpm install").pipeStdout(process.stdout);
           startCommand = "pnpm run dev";
+        } else if (yarn) {
+          spinner.text = "Installing dependencies";
+          await execaCommand("yarn install").pipeStdout(process.stdout);
+          spinner.text = "";
+          startCommand = "yarn dev";
         } else {
           spinner.text = "Installing dependencies";
-          await execa("npm", ["install", "--verbose"]).pipeStdout(
-            process.stdout
-          );
+          await execaCommand("npm install").pipeStdout(process.stdout);
           spinner.text = "";
           startCommand = "npm run dev";
         }
@@ -188,11 +234,36 @@ async function main() {
         log(
           `${green.bold("Success!")} Created ${appName} at ${process.cwd()} \n`
         );
-        log(
-          `To get started, change into the new directory and run ${chalk.cyan(
-            startCommand
-          )}`
-        );
+
+        const changeDir = await input({
+          type: "confirm",
+          name: "change",
+          default: "y",
+          message: "Switch to the created directory (y/n)?",
+        });
+
+        if (changeDir === "y") {
+          process.chdir(finalDir);
+          log(`Switched to directory: ${finalDir}`);
+
+          const runDevServer = await input({
+            type: "confirm",
+            name: "runServer",
+            default: "y",
+            message: "Start development server (y/n)?",
+          });
+
+          if (runDevServer === "y") {
+            log("Starting development server...");
+            execaCommand(startCommand, { stdio: "inherit" });
+          }
+        } else {
+          log(
+            `To get started, change into the new directory and run ${chalk.cyan(
+              startCommand
+            )}`
+          );
+        }
       }
     });
   } catch (err) {

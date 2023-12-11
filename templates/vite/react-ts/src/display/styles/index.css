@@ -20,8 +20,11 @@ body {
   text-align: center;
 }
 
-a,
-a:hover {
+a {
   text-decoration: underline;
-  color: slategray;
+  color: white;
+}
+
+a:hover {
+  color: slategrey;
 }

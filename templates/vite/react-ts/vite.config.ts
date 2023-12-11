@@ -1,6 +1,7 @@
 import { defineConfig, type PluginOption } from 'vite'
 import react from '@vitejs/plugin-react'
 import { visualizer } from "rollup-plugin-visualizer";
+
 // @ts-ignore
 import { dependencies } from './package.json';
 function renderChunks(deps: Record<string, string>) {
@@ -13,6 +14,7 @@ function renderChunks(deps: Record<string, string>) {
 }
 
 // https://vitejs.dev/config/
+
 export default defineConfig({
   build: {
     sourcemap: false,
@@ -24,6 +26,7 @@ export default defineConfig({
         },
       },
     },
+    chunkSizeWarningLimit: 1500
   },
   plugins: [react(), visualizer({
     template: "sunburst",
