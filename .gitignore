@@ -170,6 +170,5 @@ dist
 
 node_modules
 .npmignore
-yarn.lock
 
 analyze.html
