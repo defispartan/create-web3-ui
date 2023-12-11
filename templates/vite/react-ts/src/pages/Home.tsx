@@ -1,12 +1,12 @@
-import Read from "../display/Read.tsx";
-import Write from "../display/Write.tsx";
+import ActiveChain from "../display/ActiveChain.tsx";
+import Contracts from "../display/Contracts.tsx";
 
 const Home = () => {
   return (
-    <div className="panels-container">
-      <Read />
-      <Write />
-    </div>
+    <>
+      <ActiveChain />
+      <Contracts />
+    </>
   );
 };
 
