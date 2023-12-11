@@ -94,7 +94,7 @@ async function main() {
             value: "vite-react-ts",
             description: "Template for a Vite + React + TypeScript project",
           },
-          {
+          /*   {
             name: "vite-react-js",
             value: "vite-react-js",
             description: "Template for a Vite + React project",
@@ -108,7 +108,7 @@ async function main() {
             name: "next-ts",
             value: "next-ts",
             description: "Template for a Next.js + TypeScript project",
-          },
+          }, */
         ],
       });
     }
@@ -118,7 +118,7 @@ async function main() {
       case "vite-react-ts":
         subDirPath = "templates/vite/react-ts";
         break;
-      case "vite-react-js":
+      /*   case "vite-react-js":
         subDirPath = "templates/vite/react-js";
         break;
       case "next-js":
@@ -126,7 +126,7 @@ async function main() {
         break;
       case "next-ts":
         subDirPath = "templates/nextjs/ts";
-        break;
+        break; */
     }
 
     spinner.start();
