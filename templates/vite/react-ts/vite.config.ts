@@ -32,6 +32,6 @@ export default defineConfig({
     template: "sunburst",
     gzipSize: true,
     brotliSize: true,
-    filename: "analyse.html",
+    filename: "analyze.html",
   }) as PluginOption],
 })
