@@ -1,6 +1,54 @@
+h3,
+h2,
 h1,
 p {
   color: #f1f1f1;
   text-align: center;
   margin: 50px auto;
+}
+
+.codeblock {
+  width: 75%;
+}
+
+.manager-block {
+  text-align: center;
+  width: 80%;
+  margin: 0 auto;
+}
+
+.manager-option {
+  display: inline-block;
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid slategray;
+  background-color: transparent;
+  color: white;
+}
+
+.manager-option.selected {
+  background-color: lightgray;
+  color: black;
+}
+
+:root {
+  --primary-color: #f1f1f1;
+  --background-dark: #121212;
+  --border-color: slategray;
+  --text-color-dark: black;
+  --text-color-light: white;
+}
+
+.tech-stack {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  width: 500px;
+  margin: 20px auto;
+  color: var(--primary-color);
+  font-weight: 800;
+  align-items: center;
 }
