@@ -15,7 +15,8 @@
     "react-dom": "^18.2.0",
     "react-query": "^3.39.3",
     "viem": "^1.19.11",
-    "wagmi": "^1.4.8"
+    "wagmi": "^1.4.8",
+    "zustand": "^4.4.7"
   },
   "devDependencies": {
     "@types/react": "^18.2.37",
