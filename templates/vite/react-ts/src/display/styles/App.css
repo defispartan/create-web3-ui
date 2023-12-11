@@ -24,13 +24,12 @@
 }
 
 .panel {
-  width: 40%;
-  border: 1px solid #f5f5f5;
+  width: 50%;
   padding: 10px;
   box-sizing: border-box;
   min-width: 200px;
   border-radius: 20px;
-  background-color: #f5f5f5;
+  margin-bottom: 20px;
 }
 
 @media (max-width: 600px) {
@@ -67,4 +66,71 @@
 
 .execute-button:hover {
   background-color: lightgray;
+}
+
+.chain-selector {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.chain-selector:focus {
+  outline: none;
+  border-color: #4a90e2;
+}
+
+.panel-full {
+  width: 60%;
+  padding: 10px;
+  box-sizing: border-box;
+  min-width: 200px;
+  border-radius: 20px;
+  margin: 20px auto;
+  color: white;
+}
+
+.contract-row {
+  width: 90%;
+  padding: 10px;
+  box-sizing: border-box;
+  min-width: 200px;
+  border-radius: 5px;
+  margin: 20px auto;
+  color: white;
+  border: 1px solid white;
+}
+
+.contract-row-title {
+  display: inline-flex;
+  align-items: center;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 30px;
+}
+
+.contract-details {
+  width: 100%;
+  display: inline-flex;
+}
+
+.code-inline {
+  background-color: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  font-family: monospace;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.caret {
+  transition: transform 0.15s ease-in-out;
+}
+
+.rotate-caret {
+  transform: rotate(90deg);
 }
