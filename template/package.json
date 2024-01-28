@@ -1,0 +1,50 @@
+{
+  "name": "create-web3-ui",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint '*/**/*.{js,ts,tsx}' --quiet --fix",
+    "format": "prettier --write ."
+  },
+  "dependencies": {
+    "connectkit": "^1.5.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-query": "^3.39.3",
+    "viem": "^1.19.11",
+    "wagmi": "^1.4.8",
+    "zustand": "^4.4.7"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@typescript-eslint/eslint-plugin": "latest",
+    "@typescript-eslint/parser": "latest",
+    "@vitejs/plugin-react-swc": "^3.5.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "latest",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-react-refresh": "^0.4.4",
+    "prettier": "^3.1.1",
+    "rollup-plugin-visualizer": "^5.11.0",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  },
+  "lint-staged": {
+    "src/**/*.{js,jsx,ts,tsx}": [
+      "eslint --fix",
+      "vitest"
+    ],
+    "*.{ts,tsx}": "eslint --cache --fix",
+    "*.{js,css,md}": "prettier --write"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": "^18.17"
+  }
+}
