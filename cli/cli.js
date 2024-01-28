@@ -7,7 +7,6 @@ import { dirname } from "path";
 import fs from "fs";
 import { input } from "@inquirer/prompts";
 import { Command } from "commander";
-import select from "@inquirer/select";
 import { execaCommand } from "execa";
 import ora from "ora";
 import childProcess from "child_process";
@@ -49,15 +48,11 @@ async function main() {
   });
 
   try {
-    const kebabRegez = /^([a-z]+)(-[a-z0-9]+)*$/;
+    const kebabRegex = /^([a-z0-9]+)(-[a-z0-9]+)*$/;
 
     program
       .name("Create Web3 UI")
-      .description("Generate template for Web3 frontend application.")
-      .option(
-        "-f, --framework <web project framework>",
-        "Choose a web project framework. Options: vite-react-js, vite-react-ts, next-js, next-ts"
-      );
+      .description("Generate template for Web3 frontend application.");
 
     program.parse(process.argv);
 
@@ -66,12 +61,12 @@ async function main() {
     let type = options.framework;
     let appName = args[0];
 
-    if (!appName || !kebabRegez.test(args[0])) {
+    if (!appName || !kebabRegex.test(args[0])) {
       appName = await input({
         message: "Enter your app name",
         default: "my-web3-ui",
         validate: (d) => {
-          if (!kebabRegez.test(d)) {
+          if (!kebabRegex.test(d)) {
             return "please enter your app name in the format of my-app-name";
           }
           return true;
@@ -79,55 +74,8 @@ async function main() {
       });
     }
 
-    if (
-      !type ||
-      (type !== "vite-react-js" &&
-        type !== "vite-react-ts" &&
-        type !== "next-js" &&
-        type !== "next-ts")
-    ) {
-      type = await select({
-        message: "Select an app type",
-        choices: [
-          {
-            name: "vite-react-ts",
-            value: "vite-react-ts",
-            description: "Template for a Vite + React + TypeScript project",
-          },
-          /*   {
-            name: "vite-react-js",
-            value: "vite-react-js",
-            description: "Template for a Vite + React project",
-          },
-          {
-            name: "next-js",
-            value: "next-js",
-            description: "Template for a Next.js project",
-          },
-          {
-            name: "next-ts",
-            value: "next-ts",
-            description: "Template for a Next.js + TypeScript project",
-          }, */
-        ],
-      });
-    }
     let repoUrl = "https://github.com/defispartan/create-web3-ui.git";
-    let subDirPath = "";
-    switch (type) {
-      case "vite-react-ts":
-        subDirPath = "templates/vite/react-ts";
-        break;
-      /*   case "vite-react-js":
-        subDirPath = "templates/vite/react-js";
-        break;
-      case "next-js":
-        subDirPath = "templates/nextjs/js";
-        break;
-      case "next-ts":
-        subDirPath = "templates/nextjs/ts";
-        break; */
-    }
+    let subDirPath = "template";
 
     spinner.start();
 
