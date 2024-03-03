@@ -1,4 +1,5 @@
-import { Chain, Transport } from "viem";
+import { Transport } from "viem";
+import { Chain } from "wagmi/chains";
 
 export interface ContractConfig {
   address: `0x${string}`;
