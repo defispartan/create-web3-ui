@@ -1,14 +1,14 @@
-import { defineConfig, type PluginOption } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import { defineConfig, type PluginOption } from "vite";
+import react from "@vitejs/plugin-react-swc";
 import { visualizer } from "rollup-plugin-visualizer";
 
 // @ts-ignore
-import { dependencies } from './package.json';
+import { dependencies } from "./package.json";
 
 function renderChunks(deps: Record<string, string>) {
   let chunks = {};
   Object.keys(deps).forEach((key) => {
-    if (['react', 'react-dom', 'viem'].includes(key)) return;
+    if (["react", "react-dom", "viem", "wagmi"].includes(key)) return;
     chunks[key] = [key];
   });
   return chunks;
@@ -21,16 +21,19 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom', 'viem'],
+          vendor: ["react", "react-dom", "viem", "wagmi"],
           ...renderChunks(dependencies),
         },
       },
     },
-    chunkSizeWarningLimit: 1500
+    chunkSizeWarningLimit: 1500,
   },
-  plugins: [react(), visualizer({
-    template: "sunburst",
-    gzipSize: true,
-    filename: "analyze.html",
-  }) as PluginOption],
-})
+  plugins: [
+    react(),
+    visualizer({
+      template: "sunburst",
+      gzipSize: true,
+      filename: "analyze.html",
+    }) as PluginOption,
+  ],
+});
