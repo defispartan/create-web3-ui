@@ -15,6 +15,7 @@ const contracts: Record<number, ContractConfig[]> = {
   ],
 };
 
+// Chain, RPC, and WalletConnect configuration
 const web3Config: Web3Config = {
   contracts,
   defaultChain: sepolia,
