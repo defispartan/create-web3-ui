@@ -3,6 +3,7 @@ import useRootStore from "../store/rootStore.ts";
 import Read from "./Read.tsx";
 import Write from "./Write.tsx";
 import { ContractConfig } from "../types.ts";
+import Actions from "./Actions.tsx";
 
 const Contracts = () => {
   const [activeChainContracts, activeChain] = useRootStore((state) => [
@@ -68,6 +69,7 @@ const Contracts = () => {
           )
         )
       )}
+      <Actions />
     </div>
   );
 };
