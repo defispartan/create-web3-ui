@@ -1,38 +1,35 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './display/styles/index.css'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./display/styles/index.css";
+import { WagmiProvider, createConfig } from "wagmi";
+import { Chain } from "wagmi/chains";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { App } from "./App";
+import web3Config from "../web3.config";
 
-import { ConnectKitProvider, getDefaultConfig } from 'connectkit'
-import { WagmiConfig, configureChains, createConfig } from 'wagmi'
+export const wagmiConfig = createConfig(
+  getDefaultConfig({
+    chains: web3Config.availableChains as [Chain, ...Chain[]],
+    transports: web3Config.transports,
+    ...web3Config.appProps,
+  })
+);
 
-import { App } from './App.tsx'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import web3Config from '../web3.config.ts'
+const queryClient = new QueryClient();
 
-export const { publicClient } = configureChains(web3Config.availableChains, web3Config.rpcProviders)
-
-const config = createConfig(getDefaultConfig({ ...web3Config.appConfig, publicClient }))
-
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
-
-const client = new QueryClient()
+const root = ReactDOM.createRoot(
+  document.getElementById("root") as HTMLElement
+);
 
 root.render(
   <React.StrictMode>
-    <WagmiConfig config={config}>
-      <ConnectKitProvider
-        debugMode
-        options={{
-          walletConnectName: 'WalletConnect',
-          walletConnectCTA: 'both',
-          initialChainId: web3Config.defaultChain.id,
-          enforceSupportedChains: false,
-        }}
-      >
-        <QueryClientProvider client={client}>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <ConnectKitProvider>
           <App />
-        </QueryClientProvider>
-      </ConnectKitProvider>
-    </WagmiConfig>
+        </ConnectKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
   </React.StrictMode>
-)
+);
